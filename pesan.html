@@ -344,17 +344,40 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+    import { getFirestore, collection, addDoc, query, where, getDocs } from "firebase/firestore"; // Import Firestore functions
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR7JIosRH5rqTXDL45cwnomy16mUBb99U",
+      authDomain: "imk07-16d6c.firebaseapp.com",
+      projectId: "imk07-16d6c",
+      storageBucket: "imk07-16d6c.firebasestorage.app",
+      messagingSenderId: "94500227009",
+      appId: "1:94500227009:web:c2f708421e8fc1d32c1140",
+      measurementId: "G-T734CTKRV3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app); // Initialize Firestore
+
     // Inisialisasi data
     let selectedSeats = [];
-    let bookedSeats = JSON.parse(localStorage.getItem('booked_seats')) || [];
     let currentPrice = 0;
 
     // Fungsi untuk membuat denah kursi
-    function createSeatMap() {
+    async function createSeatMap() {
       const seatGrid = document.getElementById('seatGrid');
       seatGrid.innerHTML = '';
       
+      const selectedDate = document.getElementById('tanggal').value;
+      const bookedSeatsForDate = await getBookedSeatsFromFirestore(selectedDate);
+
       // Buat 16 kursi penumpang (4x4)
       for (let i = 1; i <= 16; i++) {
         const seat = document.createElement('div');
@@ -362,8 +385,8 @@
         seat.textContent = i;
         seat.dataset.seatNumber = i;
         
-        // Cek apakah kursi sudah dipesan
-        const isBooked = isSeatBooked(i, document.getElementById('tanggal').value);
+        // Cek apakah kursi sudah dipesan dari Firestore
+        const isBooked = bookedSeatsForDate.includes(i);
         if (isBooked) {
           seat.classList.add('taken');
         }
@@ -373,12 +396,24 @@
       }
     }
 
-    // Fungsi untuk mengecek apakah kursi sudah dipesan
-    function isSeatBooked(seatNumber, tanggal) {
-      const bookingHistory = JSON.parse(localStorage.getItem('booking_history')) || [];
-      return bookingHistory.some(booking => 
-        booking.kursi.includes(seatNumber) && booking.tanggal === tanggal
-      );
+    // Fungsi untuk mendapatkan kursi yang sudah dipesan dari Firestore
+    async function getBookedSeatsFromFirestore(tanggal) {
+      const bookedSeats = [];
+      if (!tanggal) return bookedSeats; // Return empty if no date selected
+
+      try {
+        const q = query(collection(db, "bookings"), where("tanggal", "==", tanggal));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          const bookingData = doc.data();
+          if (bookingData.kursi && Array.isArray(bookingData.kursi)) {
+            bookedSeats.push(...bookingData.kursi);
+          }
+        });
+      } catch (e) {
+        console.error("Error getting booked seats from Firestore: ", e);
+      }
+      return bookedSeats;
     }
 
     // Fungsi untuk toggle seleksi kursi
@@ -429,6 +464,17 @@
       }
     }
 
+    // Fungsi untuk menyimpan data pemesanan ke Firestore
+    async function saveBookingToFirestore(bookingData) {
+      try {
+        const docRef = await addDoc(collection(db, "bookings"), bookingData);
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        alert("Terjadi kesalahan saat menyimpan pemesanan ke database. Silakan coba lagi.");
+      }
+    }
+
     // Event listeners
     document.getElementById('jumlahTiket').addEventListener('input', function() {
       // Reset seleksi kursi jika jumlah tiket berubah
@@ -446,7 +492,7 @@
       updateTotalPrice();
     });
 
-    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const jumlahTiket = parseInt(document.getElementById('jumlahTiket').value);
@@ -471,24 +517,17 @@
         jam: document.getElementById('jam').value,
         jumlahTiket: jumlahTiket,
         kursi: selectedSeats,
-        totalHarga: currentPrice
+        totalHarga: currentPrice,
+        timestamp: new Date() // Tambahkan timestamp untuk melacak waktu pemesanan
       };
       
-      // Tambahkan ke booking history
+      // Simpan ke Firestore
+      await saveBookingToFirestore(bookingData);
+
+      // Tambahkan ke booking history di localStorage (opsional, jika masih ingin menyimpan lokal)
       const bookingHistory = JSON.parse(localStorage.getItem('booking_history')) || [];
       bookingHistory.push(bookingData);
       localStorage.setItem('booking_history', JSON.stringify(bookingHistory));
-      
-      // Tambahkan kursi yang dipesan ke bookedSeats
-      selectedSeats.forEach(seatNumber => {
-        bookedSeats.push({
-          seatNumber: seatNumber,
-          tanggal: tanggal,
-          bookingData: bookingData
-        });
-      });
-      
-      localStorage.setItem('booked_seats', JSON.stringify(bookedSeats));
       
       alert(`Pemesanan berhasil! Kursi ${selectedSeats.join(', ')} telah dipesan seharga Rp ${currentPrice.toLocaleString('id-ID')}.`);
       
