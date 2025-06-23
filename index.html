@@ -319,7 +319,7 @@
   <div class="halaman-awal" id="halamanAwal">
     <!-- Logo Admin menggunakan div hero dengan img -->
     <div class="hero-admin" onclick="masukAdmin()">
-      <img src="admin.png" alt="Admin Access">
+      <img src="img/admin.png" alt="Admin Access">
     </div>
     
     <div id="introAwal">
@@ -374,7 +374,28 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } from "firebase/firestore";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR7JIosRH5rqTXDL45cwnomy16mUBb99U",
+      authDomain: "imk07-16d6c.firebaseapp.com",
+      projectId: "imk07-16d6c",
+      storageBucket: "imk07-16d6c.firebasestorage.app",
+      messagingSenderId: "94500227009",
+      appId: "1:94500227009:web:c2f708421e8fc1d32c1140",
+      measurementId: "G-T734CTKRV3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app); // Initialize Firestore
+
     // Jika sudah login, langsung redirect ke beranda.html
     window.onload = function () {
       const akunLogin = JSON.parse(localStorage.getItem("login_aktif"));
@@ -389,20 +410,35 @@
       document.getElementById("introAwal").style.display = "block";
     }
 
-    function tampilkanDaftarAkun() {
+    async function tampilkanDaftarAkun() {
       document.getElementById("introAwal").style.display = "none";
       const container = document.getElementById("daftarAkunContainer");
-      const akunList = JSON.parse(localStorage.getItem("daftar_akun")) || [];
-      container.innerHTML = "";
+      container.innerHTML = ""; // Bersihkan konten sebelumnya
 
-      akunList.forEach((akun, index) => {
-        const div = document.createElement("div");
-        div.className = "akun-item";
-        div.innerHTML = `<span>${akun.nama} (${akun.username})</span>
-          <button class="btn-login" onclick="masukAkun(${index})">Masuk</button>
-          <button class="btn-hapus" onclick="hapusAkun(${index})">Hapus</button>`;
-        container.appendChild(div);
-      });
+      let daftarAkun = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach((doc) => {
+          daftarAkun.push({ id: doc.id, ...doc.data() });
+        });
+      } catch (e) {
+        console.error("Error getting documents: ", e);
+        alert("Gagal memuat daftar akun dari database.");
+        return;
+      }
+
+      if (daftarAkun.length === 0) {
+        container.innerHTML = "<p style='text-align: center; color: #666;'>Belum ada akun terdaftar.</p>";
+      } else {
+        daftarAkun.forEach((akun, index) => {
+          const div = document.createElement("div");
+          div.className = "akun-item";
+          div.innerHTML = `<span>${akun.nama} (${akun.username})</span>
+            <button class="btn-login" onclick="masukAkun('${akun.id}')">Masuk</button>
+            <button class="btn-hapus" onclick="hapusAkun('${akun.id}')">Hapus</button>`;
+          container.appendChild(div);
+        });
+      }
 
       document.getElementById("akunList").style.display = "block";
       document.getElementById("btnMasuk").style.display = "none";
@@ -414,7 +450,7 @@
       document.getElementById("formDaftar").style.display = "block";
     }
 
-    function simpanDanMasuk() {
+    async function simpanDanMasuk() {
       const nama = document.getElementById("nama").value.trim();
       const username = document.getElementById("username").value.trim();
       const jenis_kelamin = document.getElementById("jk").value;
@@ -426,45 +462,68 @@
         return;
       }
 
-      const daftarAkun = JSON.parse(localStorage.getItem("daftar_akun")) || [];
-
-      // Cek username unik
-      if (daftarAkun.some(akun => akun.username === username)) {
-        alert("Username sudah terdaftar, gunakan username lain.");
+      // Cek username unik di Firestore
+      try {
+        const q = query(collection(db, "users"), where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          alert("Username sudah terdaftar, gunakan username lain.");
+          return;
+        }
+      } catch (e) {
+        console.error("Error checking username uniqueness: ", e);
+        alert("Terjadi kesalahan saat memeriksa username. Silakan coba lagi.");
         return;
       }
 
       const akunBaru = { nama, username, jenis_kelamin, alamat, no_hp };
-      daftarAkun.push(akunBaru);
-      localStorage.setItem("daftar_akun", JSON.stringify(daftarAkun));
-      localStorage.setItem("login_aktif", JSON.stringify(akunBaru));
 
-      mulaiTransisiMasuk(akunBaru);
-    }
-
-    function masukAkun(index) {
-      const daftarAkun = JSON.parse(localStorage.getItem("daftar_akun")) || [];
-      if (!daftarAkun[index]) {
-        alert("Akun tidak ditemukan.");
-        return;
+      try {
+        const docRef = await addDoc(collection(db, "users"), akunBaru);
+        console.log("Document written with ID: ", docRef.id);
+        // Simpan juga ke localStorage untuk login aktif
+        localStorage.setItem("login_aktif", JSON.stringify({ id: docRef.id, ...akunBaru }));
+        mulaiTransisiMasuk({ id: docRef.id, ...akunBaru });
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        alert("Terjadi kesalahan saat mendaftar akun. Silakan coba lagi.");
       }
-      localStorage.setItem("login_aktif", JSON.stringify(daftarAkun[index]));
-      mulaiTransisiMasuk(daftarAkun[index]);
     }
 
-    function hapusAkun(index) {
+    async function masukAkun(accountId) {
+      try {
+        const q = query(collection(db, "users"), where("__name__", "==", accountId));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+          alert("Akun tidak ditemukan.");
+          return;
+        }
+        const akunLogin = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
+        localStorage.setItem("login_aktif", JSON.stringify(akunLogin));
+        mulaiTransisiMasuk(akunLogin);
+      } catch (e) {
+        console.error("Error getting account for login: ", e);
+        alert("Terjadi kesalahan saat masuk akun. Silakan coba lagi.");
+      }
+    }
+
+    async function hapusAkun(accountId) {
       if (!confirm("Yakin ingin menghapus akun ini?")) return;
-      let daftarAkun = JSON.parse(localStorage.getItem("daftar_akun")) || [];
-      if (index < 0 || index >= daftarAkun.length) return;
-      daftarAkun.splice(index, 1);
-      localStorage.setItem("daftar_akun", JSON.stringify(daftarAkun));
 
-      // Jika akun yg dihapus adalah yang login, hapus juga login_aktif
-      const loginAktif = JSON.parse(localStorage.getItem("login_aktif"));
-      if (loginAktif && daftarAkun.every(a => a.username !== loginAktif.username)) {
-        localStorage.removeItem("login_aktif");
+      try {
+        await deleteDoc(doc(db, "users", accountId));
+        console.log("Document successfully deleted!");
+
+        // Jika akun yg dihapus adalah yang login, hapus juga login_aktif
+        const loginAktif = JSON.parse(localStorage.getItem("login_aktif"));
+        if (loginAktif && loginAktif.id === accountId) {
+          localStorage.removeItem("login_aktif");
+        }
+        tampilkanDaftarAkun(); // Refresh daftar akun
+      } catch (e) {
+        console.error("Error removing document: ", e);
+        alert("Terjadi kesalahan saat menghapus akun. Silakan coba lagi.");
       }
-      tampilkanDaftarAkun();
     }
 
     function mulaiTransisiMasuk(akun) {
@@ -475,11 +534,12 @@
         window.location.href = "beranda.html";
       }, 1200);
     }
-function masukAdmin() {
+
+    function masukAdmin() {
       const username = prompt("Masukkan Username Admin:");
       const password = prompt("Masukkan Kata Sandi Admin:");
 
-       // Ganti dengan logika autentikasi yang sesuai
+      // Ganti dengan logika autentikasi yang sesuai
       if (username === "admin" && password === "admin123") {
         window.location.href = "admin.html";
       } else {
