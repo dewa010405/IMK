@@ -2,550 +2,584 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
+  <title>Beranda - TimorTravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pilih Akun Masuk - TimorTravel</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Material+Symbols+Rounded" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
-    @keyframes typing {
-      from { width: 0 }
-      to { width: 100% }
-    }
-    
-    @keyframes blink-caret {
-      from, to { border-color: transparent }
-      50% { border-color: white }
-    }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      overflow: hidden;
+      background-color: #f6fbff;
+      color: #333;
     }
-    
-    .background-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    
-    .background-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: blur(8px) brightness(0.7);
-    }
-    
-    .halaman-awal {
-      height: 100vh;
-      color: white;
+
+    /* Header */
+    .header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      transition: transform 1s ease-in-out;
-      position: fixed;
-      top: 0; 
-      left: 0; 
-      right: 0; 
-      bottom: 0;
-      padding: 20px;
-      z-index: 10;
-      overflow-y: auto;
+      background-color: #eef8ff;
+      padding: 16px 24px;
+      border-bottom: 1px solid #ddd;
     }
-    
-    .typing-effect {
-      overflow: hidden;
-      white-space: nowrap;
-      margin: 0 auto;
-      letter-spacing: 1px;
-      animation: 
-        typing 2s steps(30, end),
-        blink-caret .75s step-end infinite;
-      border-right: 3px solid white;
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      font-family: 'Poppins', sans-serif;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    
-    .subtitle {
-      opacity: 0;
-      animation: fadeInUp 1s ease forwards 2s;
-      font-size: 1.2rem;
-      margin-bottom: 5px;
-      text-shadow: 0 1px 5px rgba(0,0,0,0.3);
-    }
-    
-    .tagline {
-      opacity: 0;
-      animation: fadeInUp 1s ease forwards 2s;
-      font-style: italic;
-      font-weight: 300;
-      margin-bottom: 30px;
-      text-shadow: 0 1px 5px rgba(0,0,0,0.3);
-    }
-    
-    .user-icon-container {
-      opacity: 0;
-      animation: fadeInUp 1s ease forwards 2s;
-      text-align: center;
-      margin-top: 20px;
-    }
-    
-    .btn-masuk {
-      opacity: 0;
-      animation: fadeInUp 1s ease forwards 2s;
-      padding: 12px 24px;
-      font-size: 1rem;
-      background: rgba(255,255,255,0.9);
-      color: #2a5298;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      margin-top: 20px;
-    }
-    
-    .btn-masuk:hover {
-      transform: scale(1.05);
-      background-color: white;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-    
-    .akun-list,
-    .form-daftar {
-      display: none;
-      width: 100%;
-      max-width: 360px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 25px 25px 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;
-      text-align: left;
-      transition: all 0.4s ease-in-out;
-      box-sizing: border-box;
-      color: #2a5298;
-    }
-    
-    .akun-list h3,
-    .form-daftar h3 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    
-    .akun-item {
-      background: #f7f9fb;
-      margin: 8px 0;
-      padding: 8px 10px;
-      border-radius: 6px;
+
+    .logo {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-      font-size: 14px;
-      color: #000;
-    }
-    
-    .akun-item span {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      font-size: 24px;
       font-weight: 500;
+      color: #0070dd;
+      margin-bottom: 10px;
     }
-    
-    .akun-item button {
-      margin-left: 8px;
-      padding: 4px 8px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: background-color 0.2s ease;
+
+    .logo .material-symbols-rounded {
+      font-size: 28px;
+      color: #fbbc05;
+      margin-right: 8px;
     }
-    
-    .btn-login {
-      background-color: #2a5298;
-      color: white;
+
+    .menu {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      background: white;
+      padding: 10px 25px;
+      border-radius: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      font-size: 15px;
+      margin-bottom: 20px;
     }
-    
-    .btn-login:hover {
-      background-color: #1e3c72;
+
+    .menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      border-radius: 30px;
+      position: relative;
+      transition: background-color 0.3s, color 0.3s;
+      margin-right: 15px;
     }
-    
-    .btn-hapus {
-      background-color: crimson;
-      color: white;
+
+    .menu a:last-child {
+      margin-right: 0;
     }
-    
-    .btn-hapus:hover {
-      background-color: darkred;
+
+    .menu a:hover {
+      background-color: #e3f0ff;
+      color: #0070dd;
     }
-    
-    .form-group {
-      margin-bottom: 15px;
+
+    .menu a .material-symbols-rounded {
+      margin-right: 6px;
+      font-size: 20px;
+    }
+
+    /* Warna beda tiap ikon */
+    .menu a:nth-child(1) .material-symbols-rounded { color: #ff5722; }
+    .menu a:nth-child(2) .material-symbols-rounded { color: #4caf50; }
+    .menu a:nth-child(3) .material-symbols-rounded { color: #2196f3; }
+    .menu a:nth-child(4) .material-symbols-rounded { color: #9c27b0; }
+
+    /* Pembatas antar menu */
+    .menu a:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: 8px;
+      height: 24px;
+      width: 1px;
+      background-color: #ddd;
+    }
+
+    /* Konten utama */
+    .konten-utama {
+      min-height: calc(100vh - 160px);
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 40px 0;
+      animation: slideMasuk 1s ease-in-out forwards;
+      opacity: 0;
+      transform: translateY(50px);
+      text-align: left;
       position: relative;
     }
-    
-    .form-group i {
-      position: absolute;
-      top: 50%;
-      left: 10px;
-      transform: translateY(-50%);
+
+    @keyframes slideMasuk {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Container untuk teks halo + intro */
+    .intro-wrapper {
+      max-width: 100%;
+      margin: 0 auto 40px auto;
+      padding: 0 10px;
+    }
+
+    /* Halo-nama di atas teks bahasa inggris, posisi center horizontal dalam container */
+    .halo-nama {
+      font-size: 32px;
+      font-weight: 700;
       color: #2a5298;
+      margin-bottom: 12px;
+      text-align: center;
+      user-select: none;
     }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 90%;
-      max-width: 280px;
-      padding: 10px 10px 10px 35px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      background-color: #fdfdfd;
-      transition: border-color 0.3s, box-shadow 0.3s;
-      margin: 0 auto;
+
+    /* Container teks + gambar */
+    .intro-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .intro-text, .intro-image {
+      flex: 1;
+      max-width: 50%;
+    }
+
+    /* Teks Bahasa Inggris */
+    .intro-text {
+      text-align: center;
+    }
+
+    .intro-text h1 {
+      font-size: 44px;
+      line-height: 1.2;
+      color: #1d1d1f;
+      font-weight: 700;
+      margin-bottom: 12px;
+      margin-top: 0;
+    }
+
+    .intro-text p {
+      font-size: 20px;
+      color: #4b5563;
+      font-weight: 500;
+      margin: 0;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Gambar diperbesar langsung tanpa container dan tanpa efek apapun */
+    .intro-image img {
+      width: 550px;
+      height: auto;
+      border-radius: 0;
+      box-shadow: none;
+      user-select: none;
       display: block;
-      color: #333;
+      max-width: 100%;
+      transition: filter 0.3s ease;
     }
-    
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: #2a5298;
-      box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
-      outline: none;
+
+    /* Jadwal Container */
+    .jadwal-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background-color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      width: 80%;
+      max-width: 600px;
+      text-align: center;
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: 101;
+      display: none;
     }
-    
-    .form-daftar button {
+
+    .jadwal-container.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      display: block;
+    }
+
+    /* Info Popup */
+    .info-popup {
+      position: fixed;
+      bottom: -100%;
+      left: 0;
       width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      height: auto;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.4);
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: bottom 0.4s ease;
+      z-index: 100;
+    }
+
+    .info-popup.show {
+      bottom: 0;
+    }
+
+    .info-popup h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-popup p {
+      font-size: 1.1rem;
+    }
+
+    .close-btn {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      background: #dc3545;
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: bold;
+      padding: 0.5rem 1.5rem;
+      border-radius: 2rem;
       cursor: pointer;
-      transition: transform 0.2s, background 0.3s;
     }
-    
-    .form-daftar button:hover {
-      background: linear-gradient(135deg, #16305a, #1e3c72);
-      transform: scale(1.02);
+
+    /* Efek blur */
+    .blurred {
+      filter: blur(5px);
     }
-    
-    .transisi-naik {
-      transform: translateY(-100vh);
-    }
-    
-    .tombol-close {
-      background: transparent;
+
+    /* Tombol tutup */
+    .close-jadwal-btn {
+      margin-top: 1rem;
+      background-color: #0d6efd;
+      color: white;
       border: none;
-      color: #2a5298;
-      font-size: 18px;
-      font-weight: bold;
+      padding: 0.4rem 1.2rem;
+      border-radius: 1.5rem;
+      font-size: 0.95rem;
       cursor: pointer;
     }
-    
-    .tombol-close:hover {
-      color: crimson;
-    }
-    
-    /* Style untuk logo admin */
-    .hero-admin {
-      position: absolute;
-      top: 20px;
+
+    /* Ikon Akun */
+    .icon-akun {
+      position: fixed;
+      top: 15px;
       right: 20px;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: all 0.3s ease;
-      width: 50px;
-      height: 50px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      z-index: 20;
-      background-color: rgba(255,255,255,0.2);
-      border: 2px solid rgba(255,255,255,0.3);
+      background-color: #2a5298;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      user-select: none;
+      z-index: 1001;
     }
-    
-    .hero-admin img {
+
+    .popup-akun {
+      position: fixed;
+      top: 65px;
+      right: 20px;
+      width: 280px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: none;
+      z-index: 1000;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .popup-akun p {
+      margin: 8px 0;
+    }
+
+    .popup-akun strong {
+      color: #2a5298;
+    }
+
+    .popup-akun button {
+      margin-top: 15px;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      padding: 10px;
+      background-color: #2a5298;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
     }
-    
-    .hero-admin:hover {
-      opacity: 1;
-      transform: scale(1.1);
-      box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+
+    .popup-akun button:hover {
+      background-color: #1e3c72;
+    }
+
+    @media (max-width: 600px) {
+      .konten-utama {
+        padding: 20px 10px;
+      }
+      .intro-wrapper {
+        max-width: 100%;
+      }
+      .halo-nama {
+        font-size: 24px;
+      }
+      .intro-text h1 {
+        font-size: 28px;
+      }
+      .intro-text p {
+        font-size: 16px;
+      }
+      .intro-flex {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .intro-image img {
+        width: 100%;
+      }
+      .popup-akun {
+        width: 90%;
+        right: 5%;
+      }
+      .jadwal-container {
+        width: 95%;
+        padding: 10px;
+      }
+      .info-popup {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="background-container">
-    <!-- Ganti URL gambar dengan link yang Anda inginkan -->
-    <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" class="background-image" alt="Background">
-  </div>
-  
-  <div class="halaman-awal" id="halamanAwal">
-    <!-- Logo Admin menggunakan div hero dengan img -->
-    <div class="hero-admin" onclick="masukAdmin()">
-      <img src="img/admin.png" alt="Admin Access">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <span class="material-symbols-rounded">directions_bus</span>
+      TimorTravel.com
     </div>
+    <div class="menu">
+      <a href="#" id="jadwalBtn"><span class="material-symbols-rounded">schedule</span>Jadwal</a>
+      <a href="pesan.html" id="pemesananBtn"><span class="material-symbols-rounded">confirmation_number</span>Pemesanan</a>
+      <a href="#" id="infoBtn"><span class="material-symbols-rounded">info</span>Informasi</a>
+      <a href="#" id="riwayatBtn"><span class="material-symbols-rounded">history</span>Riwayat</a>
+    </div>
+  </div>
+
+  <!-- Konten Utama -->
+  <div class="konten-utama" id="beranda">
+    <div class="intro-wrapper">
+      <div class="halo-nama">Halo, <span id="namaAkun"></span>!</div>
+      <div class="intro-flex" id="introContent">
+        <div class="intro-text">
+          <h1>Temukan tiket <br>bus murah untuk<br>perjalanan Anda berikutnya</h1>
+          <p>pesan perjalanan Anda berikutnya
+            <br>dengan mudah melalui Timor Travel.com</p>
+        </div>
+        <div class="intro-image">
+          <img src="https://img.freepik.com/free-vector/passengers-waiting-public-transport-bus-stop_74855-5282.jpg?ga=GA1.1.1791849223.1750557348&semt=ais_hybrid&w=740" alt="Passengers Waiting at Bus Stop" id="mainImage" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jadwal Container -->
+  <div class="jadwal-container" id="jadwalContainer">
+    <h2 class="mb-4">Jadwal Keberangkatan</h2>
+
+    <table class="table table-bordered table-striped" style="background-color: #f8f9fa; border-radius: 10px; overflow: hidden;">
+      <thead class="table-primary text-center">
+        <tr>
+          <th>Hari Operasional</th>
+          <th>Jam Keberangkatan</th>
+          <th>Rute Perjalanan</th>
+        </tr>
+      </thead>
+      <tbody style="text-align: center;">
+        <tr>
+          <td rowspan="6" style="vertical-align: middle;">Senin - Sabtu</td>
+          <td rowspan="6" style="vertical-align: middle;">
+            <div>08.00 Pagi</div>
+            <div>14.00 Siang</div>
+            <div>17.00 Sore</div>
+          </td>
+          <td>Kefa → Kupang</td>
+        </tr>
+        <tr><td>Kupang → Kefa</td></tr>
+        <tr><td>Kefa → Atambua</td></tr>
+        <tr><td>Atambua → Kefa</td></tr>
+        <tr><td>Kupang → Atambua</td></tr>
+        <tr><td>Atambua → Kupang</td></tr>
+      </tbody>
+    </table>
+
+    <button class="close-jadwal-btn mt-3" id="closeJadwal">Tutup</button>
+  </div>
+
+  <!-- Info Popup -->
+  <div class="info-popup" id="infoPopup">
+    <div class="container d-flex justify-content-center">
+      <div class="row w-100 text-white align-items-start">
+        <!-- Kolom 1: Logo -->
+        <div class="col-md-3 d-flex justify-content-center mb-3 mb-md-0" style="margin-top: -0.5rem;">
+          <i class="bi bi-info-circle" style="font-size: 5.5rem; color: #0dcaf0;"></i>
+        </div>
+
+        <!-- Kolom 2: Kontak -->
+        <div class="col-md-5">
+          <h4>Kontak Kami</h4>
+          <p><i class="bi bi-whatsapp"></i> +62 812-3456-7890</p>
+          <p><i class="bi bi-facebook"></i> TimorTravelFB</p>
+          <p><i class="bi bi-instagram"></i> @TimorTravel</p>
+          <p><i class="bi bi-twitter"></i> @TimorTravelID</p>
+          <p><i class="bi bi-envelope"></i> timortravel@email.com</p>
+        </div>
+
+        <!-- Kolom 3: Lokasi -->
+        <div class="col-md-4">
+          <h4>Lokasi Kami</h4>
+          <p><i class="bi bi-geo-alt-fill"></i> Jl. El Tari No. 45, Kupang, NTT</p>
+          <p><i class="bi bi-geo-alt-fill"></i> Jl. H.R. Koroh No. 12, Kefa</p>
+          <p><i class="bi bi-geo-alt-fill"></i> Jl. Timor Raya No. 8, Atambua</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tombol tutup -->
+    <div class="text-center mt-4">
+      <button class="close-btn" id="closeInfo">Tutup</button>
+    </div>
+  </div>
+
+  <!-- Ikon & Popup Akun -->
+  <div class="icon-akun" id="iconAkun" title="Akun">
+    <span id="inisialAkun"></span>
+  </div>
+
+  <div class="popup-akun" id="popupAkun">
+    <p><strong>Nama:</strong> <span id="popupNama"></span></p>
+    <p><strong>Username:</strong> <span id="popupUsername"></span></p>
+    <p><strong>Jenis Kelamin:</strong> <span id="popupJK"></span></p>
+    <p><strong>Alamat:</strong> <span id="popupAlamat"></span></p>
+    <p><strong>No HP:</strong> <span id="popupNoHp"></span></p>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    // Toggle popup akun
+    const iconAkun = document.getElementById('iconAkun');
+    const popupAkun = document.getElementById('popupAkun');
+
+    iconAkun.addEventListener('click', () => {
+      popupAkun.style.display = (popupAkun.style.display === 'block') ? 'none' : 'block';
+    });
+
+    // Toggle jadwal container
+    const jadwalBtn = document.getElementById('jadwalBtn');
+    const jadwalContainer = document.getElementById('jadwalContainer');
+    const closeJadwal = document.getElementById('closeJadwal');
+    const introContent = document.getElementById('introContent');
+    const haloNama = document.querySelector('.halo-nama');
+    const mainImage = document.getElementById('mainImage');
+
+    jadwalBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      jadwalContainer.classList.add('show');
+      mainImage.classList.add('blurred');
+      introContent.style.opacity = '0.5';
+      haloNama.style.opacity = '0.5';
+    });
+
+    closeJadwal.addEventListener('click', function() {
+      jadwalContainer.classList.remove('show');
+      mainImage.classList.remove('blurred');
+      introContent.style.opacity = '1';
+      haloNama.style.opacity = '1';
+    });
+
+    // Toggle info popup
+    const infoBtn = document.getElementById('infoBtn');
+    const infoPopup = document.getElementById('infoPopup');
+    const closeInfo = document.getElementById('closeInfo');
+
+    infoBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      mainImage.classList.add('blurred');
+      introContent.style.opacity = '0.5';
+      haloNama.style.opacity = '0.5';
+      infoPopup.classList.add('show');
+    });
+
+    closeInfo.addEventListener('click', function() {
+      infoPopup.classList.remove('show');
+      mainImage.classList.remove('blurred');
+      introContent.style.opacity = '1';
+      haloNama.style.opacity = '1';
+    });
+
+    // Fungsi untuk tombol riwayat
+    const riwayatBtn = document.getElementById('riwayatBtn');
     
-    <div id="introAwal">
-      <h1 class="typing-effect">TimorTravel.com</h1>
-      <p class="subtitle">Hai kamu, mau ke mana?</p>
-      <p class="tagline">Timor Travel – Siap mengantarmu kemana saja</p>
-      <div class="user-icon-container">
-        <i class="fas fa-user-circle" style="font-size: 60px; color: white; margin-bottom: 15px;"></i><br />
-        <button class="btn-masuk" id="btnMasuk" onclick="tampilkanDaftarAkun()">Masuk</button>
-      </div>
-    </div>
+    riwayatBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'riwayat.html';
+    });
 
-    <div class="akun-list" id="akunList">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0;">Pilih Akun</h3>
-        <button onclick="tutupKontainer('akunList')" class="tombol-close">✖</button>
-      </div>
-      <div id="daftarAkunContainer"></div>
-      <button class="btn-masuk" style="opacity: 1; animation: none;" onclick="tampilkanFormBaru()">+ Daftar Akun Baru</button>
-    </div>
+    // Klik di luar popup untuk tutup popup akun
+    document.addEventListener('click', (event) => {
+      if (!popupAkun.contains(event.target) && !iconAkun.contains(event.target)) {
+        popupAkun.style.display = 'none';
+      }
+    });
 
-    <div class="form-daftar" id="formDaftar">
-      <div style="text-align: center;">
-        <h3>Daftar Akun Baru</h3>
-      </div>
+    // Fungsi logout
+    function logout() {
+      localStorage.removeItem('login_aktif');
+      window.location.href = 'index.html'; // Kembali ke halaman login
+    }
 
-      <div class="form-group">
-        <i class="fas fa-user"></i>
-        <input type="text" id="nama" placeholder="Nama Lengkap" />
-      </div>
-      <div class="form-group">
-        <i class="fas fa-user-tag"></i>
-        <input type="text" id="username" placeholder="Username" />
-      </div>
-      <div class="form-group">
-        <i class="fas fa-venus-mars"></i>
-        <select id="jk">
-          <option value="">Pilih Jenis Kelamin</option>
-          <option value="Laki-laki">Laki-laki</option>
-          <option value="Perempuan">Perempuan</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <i class="fas fa-map-marker-alt"></i>
-        <textarea id="alamat" rows="2" placeholder="Alamat"></textarea>
-      </div>
-      <div class="form-group">
-        <i class="fas fa-phone-alt"></i>
-        <input type="tel" id="nohp" placeholder="No HP" />
-      </div>
-      <button onclick="simpanDanMasuk()">Daftar & Masuk</button>
-    </div>
-  </div>
-
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
-    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } from "firebase/firestore";
-
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBR7JIosRH5rqTXDL45cwnomy16mUBb99U",
-      authDomain: "imk07-16d6c.firebaseapp.com",
-      projectId: "imk07-16d6c",
-      storageBucket: "imk07-16d6c.firebasestorage.app",
-      messagingSenderId: "94500227009",
-      appId: "1:94500227009:web:c2f708421e8fc1d32c1140",
-      measurementId: "G-T734CTKRV3"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app); // Initialize Firestore
-
-    // Jika sudah login, langsung redirect ke beranda.html
-    window.onload = function () {
-      const akunLogin = JSON.parse(localStorage.getItem("login_aktif"));
-      if (akunLogin) {
-        mulaiTransisiMasuk(akunLogin);
+    // Cek login saat halaman dimuat
+    window.onload = () => {
+      const akun = JSON.parse(localStorage.getItem('login_aktif'));
+      if (!akun) {
+        // Jika tidak ada data login di localStorage, arahkan kembali ke halaman login
+        window.location.href = 'index.html';
+      } else {
+        // Tampilkan data akun di halaman
+        document.getElementById('namaAkun').textContent = akun.nama;
+        document.getElementById('inisialAkun').textContent = akun.nama.charAt(0).toUpperCase();
+        document.getElementById('popupNama').textContent = akun.nama || '-';
+        document.getElementById('popupUsername').textContent = akun.username || '-';
+        document.getElementById('popupJK').textContent = akun.jenis_kelamin || '-';
+        document.getElementById('popupAlamat').textContent = akun.alamat || '-';
+        document.getElementById('popupNoHp').textContent = akun.no_hp || '-';
       }
     };
-
-    function tutupKontainer(id) {
-      document.getElementById(id).style.display = "none";
-      document.getElementById("btnMasuk").style.display = "inline-block";
-      document.getElementById("introAwal").style.display = "block";
-    }
-
-    async function tampilkanDaftarAkun() {
-      document.getElementById("introAwal").style.display = "none";
-      const container = document.getElementById("daftarAkunContainer");
-      container.innerHTML = ""; // Bersihkan konten sebelumnya
-
-      let daftarAkun = [];
-      try {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        querySnapshot.forEach((doc) => {
-          daftarAkun.push({ id: doc.id, ...doc.data() });
-        });
-      } catch (e) {
-        console.error("Error getting documents: ", e);
-        alert("Gagal memuat daftar akun dari database.");
-        return;
-      }
-
-      if (daftarAkun.length === 0) {
-        container.innerHTML = "<p style='text-align: center; color: #666;'>Belum ada akun terdaftar.</p>";
-      } else {
-        daftarAkun.forEach((akun, index) => {
-          const div = document.createElement("div");
-          div.className = "akun-item";
-          div.innerHTML = `<span>${akun.nama} (${akun.username})</span>
-            <button class="btn-login" onclick="masukAkun('${akun.id}')">Masuk</button>
-            <button class="btn-hapus" onclick="hapusAkun('${akun.id}')">Hapus</button>`;
-          container.appendChild(div);
-        });
-      }
-
-      document.getElementById("akunList").style.display = "block";
-      document.getElementById("btnMasuk").style.display = "none";
-      document.getElementById("formDaftar").style.display = "none";
-    }
-
-    function tampilkanFormBaru() {
-      document.getElementById("akunList").style.display = "none";
-      document.getElementById("formDaftar").style.display = "block";
-    }
-
-    async function simpanDanMasuk() {
-      const nama = document.getElementById("nama").value.trim();
-      const username = document.getElementById("username").value.trim();
-      const jenis_kelamin = document.getElementById("jk").value;
-      const alamat = document.getElementById("alamat").value.trim();
-      const no_hp = document.getElementById("nohp").value.trim();
-
-      if (!nama || !username || !jenis_kelamin || !alamat || !no_hp) {
-        alert("Mohon isi semua data dengan lengkap.");
-        return;
-      }
-
-      // Cek username unik di Firestore
-      try {
-        const q = query(collection(db, "users"), where("username", "==", username));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          alert("Username sudah terdaftar, gunakan username lain.");
-          return;
-        }
-      } catch (e) {
-        console.error("Error checking username uniqueness: ", e);
-        alert("Terjadi kesalahan saat memeriksa username. Silakan coba lagi.");
-        return;
-      }
-
-      const akunBaru = { nama, username, jenis_kelamin, alamat, no_hp };
-
-      try {
-        const docRef = await addDoc(collection(db, "users"), akunBaru);
-        console.log("Document written with ID: ", docRef.id);
-        // Simpan juga ke localStorage untuk login aktif
-        localStorage.setItem("login_aktif", JSON.stringify({ id: docRef.id, ...akunBaru }));
-        mulaiTransisiMasuk({ id: docRef.id, ...akunBaru });
-      } catch (e) {
-        console.error("Error adding document: ", e);
-        alert("Terjadi kesalahan saat mendaftar akun. Silakan coba lagi.");
-      }
-    }
-
-    async function masukAkun(accountId) {
-      try {
-        const q = query(collection(db, "users"), where("__name__", "==", accountId));
-        const querySnapshot = await getDocs(q);
-        if (querySnapshot.empty) {
-          alert("Akun tidak ditemukan.");
-          return;
-        }
-        const akunLogin = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
-        localStorage.setItem("login_aktif", JSON.stringify(akunLogin));
-        mulaiTransisiMasuk(akunLogin);
-      } catch (e) {
-        console.error("Error getting account for login: ", e);
-        alert("Terjadi kesalahan saat masuk akun. Silakan coba lagi.");
-      }
-    }
-
-    async function hapusAkun(accountId) {
-      if (!confirm("Yakin ingin menghapus akun ini?")) return;
-
-      try {
-        await deleteDoc(doc(db, "users", accountId));
-        console.log("Document successfully deleted!");
-
-        // Jika akun yg dihapus adalah yang login, hapus juga login_aktif
-        const loginAktif = JSON.parse(localStorage.getItem("login_aktif"));
-        if (loginAktif && loginAktif.id === accountId) {
-          localStorage.removeItem("login_aktif");
-        }
-        tampilkanDaftarAkun(); // Refresh daftar akun
-      } catch (e) {
-        console.error("Error removing document: ", e);
-        alert("Terjadi kesalahan saat menghapus akun. Silakan coba lagi.");
-      }
-    }
-
-    function mulaiTransisiMasuk(akun) {
-      const halamanAwal = document.getElementById("halamanAwal");
-      halamanAwal.classList.add("transisi-naik");
-
-      setTimeout(() => {
-        window.location.href = "beranda.html";
-      }, 1200);
-    }
-
-    function masukAdmin() {
-      const username = prompt("Masukkan Username Admin:");
-      const password = prompt("Masukkan Kata Sandi Admin:");
-
-      // Ganti dengan logika autentikasi yang sesuai
-      if (username === "admin" && password === "admin123") {
-        window.location.href = "admin.html";
-      } else {
-        alert("Akses ditolak. Kredensial tidak valid.");
-      }
-    }
   </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
