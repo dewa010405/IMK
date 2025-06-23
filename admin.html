@@ -214,16 +214,50 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, query, where, updateDoc } from "firebase/firestore";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBR7JIosRH5rqTXDL45cwnomy16mUBb99U",
+      authDomain: "imk07-16d6c.firebaseapp.com",
+      projectId: "imk07-16d6c",
+      storageBucket: "imk07-16d6c.firebasestorage.app",
+      messagingSenderId: "94500227009",
+      appId: "1:94500227009:web:c2f708421e8fc1d32c1140",
+      measurementId: "G-T734CTKRV3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app); // Initialize Firestore
+
     // Fungsi untuk menghitung statistik dashboard
-    function calculateStats() {
+    async function calculateStats() {
       // Hitung jumlah pengguna
-      const accounts = JSON.parse(localStorage.getItem('daftar_akun')) || [];
+      let accounts = [];
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        usersSnapshot.forEach(doc => accounts.push({ id: doc.id, ...doc.data() }));
+      } catch (e) {
+        console.error("Error getting users for stats: ", e);
+      }
       document.getElementById('totalUsers').textContent = accounts.length;
       
       // Hitung jumlah pemesanan dan total pendapatan
-      const bookings = JSON.parse(localStorage.getItem('booking_history')) || [];
-      const totalBookings = bookings.reduce((acc, booking) => acc + booking.jumlahTiket, 0);
+      let bookings = [];
+      try {
+        const bookingsSnapshot = await getDocs(collection(db, "bookings"));
+        bookingsSnapshot.forEach(doc => bookings.push({ id: doc.id, ...doc.data() }));
+      } catch (e) {
+        console.error("Error getting bookings for stats: ", e);
+      }
+
+      const totalBookings = bookings.reduce((acc, booking) => acc + (booking.jumlahTiket || 0), 0);
       const totalRevenue = bookings.reduce((acc, booking) => acc + (booking.totalHarga || 0), 0);
       
       document.getElementById('totalBookings').textContent = totalBookings;
@@ -246,9 +280,17 @@
     }
 
     // Fungsi untuk memuat daftar akun
-    function loadUserAccounts() {
+    async function loadUserAccounts() {
       const userList = document.getElementById('userList');
-      const accounts = JSON.parse(localStorage.getItem('daftar_akun')) || [];
+      let accounts = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach(doc => accounts.push({ id: doc.id, ...doc.data() }));
+      } catch (e) {
+        console.error("Error loading user accounts: ", e);
+        userList.innerHTML = `<tr><td colspan="7" class="no-data"><i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i><p>Gagal memuat data akun.</p></td></tr>`;
+        return;
+      }
       
       if (accounts.length === 0) {
         userList.innerHTML = `
@@ -274,7 +316,7 @@
           <td>${account.alamat || '-'}</td>
           <td>${account.no_hp || '-'}</td>
           <td>
-            <button class="btn btn-danger btn-sm" onclick="deleteAccount('${account.username}')">
+            <button class="btn btn-danger btn-sm" onclick="deleteAccount('${account.id}')">
               <i class="bi bi-trash"></i> Hapus
             </button>
           </td>
@@ -284,9 +326,17 @@
     }
     
     // Fungsi untuk memuat daftar pemesanan
-    function loadBookings() {
+    async function loadBookings() {
       const bookingList = document.getElementById('bookingList');
-      const bookings = JSON.parse(localStorage.getItem('booking_history')) || [];
+      let bookings = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, "bookings"));
+        querySnapshot.forEach(doc => bookings.push({ id: doc.id, ...doc.data() }));
+      } catch (e) {
+        console.error("Error loading bookings: ", e);
+        bookingList.innerHTML = `<tr><td colspan="9" class="no-data"><i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i><p>Gagal memuat data pemesanan.</p></td></tr>`;
+        return;
+      }
       
       if (bookings.length === 0) {
         bookingList.innerHTML = `
@@ -316,7 +366,7 @@
             <span class="badge bg-success">Aktif</span>
           </td>
           <td>
-            <button class="btn btn-danger btn-sm" onclick="cancelBooking(${index})">
+            <button class="btn btn-danger btn-sm" onclick="cancelBooking('${booking.id}', '${booking.rute}', '${booking.tanggal}', [${booking.kursi}])">
               <i class="bi bi-x-circle"></i> Batalkan
             </button>
           </td>
@@ -326,70 +376,92 @@
     }
     
     // Fungsi untuk menghapus akun
-    function deleteAccount(username) {
+    async function deleteAccount(accountId) {
       if (!confirm('Yakin ingin menghapus akun ini?')) return;
       
-      const accounts = JSON.parse(localStorage.getItem('daftar_akun')) || [];
-      const updatedAccounts = accounts.filter(acc => acc.username !== username);
-      
-      // Hapus juga dari login_aktif jika sama
-      const activeAccount = JSON.parse(localStorage.getItem('login_aktif'));
-      if (activeAccount && activeAccount.username === username) {
-        localStorage.removeItem('login_aktif');
+      try {
+        await deleteDoc(doc(db, "users", accountId));
+        console.log("Account successfully deleted from Firestore!");
+        
+        // Hapus juga dari login_aktif jika sama
+        const activeAccount = JSON.parse(localStorage.getItem('login_aktif'));
+        if (activeAccount && activeAccount.id === accountId) {
+          localStorage.removeItem('login_aktif');
+        }
+        
+        loadUserAccounts(); // Refresh daftar akun
+        calculateStats(); // Update stats after deletion
+      } catch (e) {
+        console.error("Error removing account: ", e);
+        alert("Terjadi kesalahan saat menghapus akun. Silakan coba lagi.");
       }
-      
-      localStorage.setItem('daftar_akun', JSON.stringify(updatedAccounts));
-      loadUserAccounts();
-      calculateStats(); // Update stats after deletion
     }
     
     // Fungsi untuk membatalkan pemesanan dan memperbarui kursi
-    function cancelBooking(index) {
+    async function cancelBooking(bookingId, routeName, date, seats) {
       if (!confirm('Yakin ingin membatalkan pemesanan ini?')) return;
       
-      const bookings = JSON.parse(localStorage.getItem('booking_history')) || [];
-      if (index < 0 || index >= bookings.length) return;
-      
-      // Ambil data pemesanan sebelum dihapus
-      const canceledBooking = bookings[index];
-      
-      // Hapus pemesanan dari booking_history
-      bookings.splice(index, 1);
-      localStorage.setItem('booking_history', JSON.stringify(bookings));
-      
-      // Kembalikan kursi yang dipesan ke status available
-      updateSeatStatus(canceledBooking.rute, canceledBooking.tanggal, canceledBooking.kursi, 'available');
-      
-      // Refresh tampilan
-      loadBookings();
-      calculateStats();
+      try {
+        // Hapus pemesanan dari Firestore
+        await deleteDoc(doc(db, "bookings", bookingId));
+        console.log("Booking successfully deleted from Firestore!");
+        
+        // Kembalikan kursi yang dipesan ke status available di Firestore
+        await updateSeatStatus(routeName, date, seats, 'available');
+        
+        // Refresh tampilan
+        loadBookings();
+        calculateStats();
+      } catch (e) {
+        console.error("Error canceling booking: ", e);
+        alert("Terjadi kesalahan saat membatalkan pemesanan. Silakan coba lagi.");
+      }
     }
 
-    // Fungsi untuk update status kursi di rute dan tanggal tertentu
-    function updateSeatStatus(routeName, date, seats, newStatus) {
-      const allRoutes = JSON.parse(localStorage.getItem('data_rute')) || [];
-      
-      // Find the route
-      const routeIndex = allRoutes.findIndex(r => r.nama === routeName);
-      if (routeIndex === -1) return;
-      
-      // Find the schedule
-      const scheduleIndex = allRoutes[routeIndex].jadwal.findIndex(
-        s => s.tanggal === date
-      );
-      if (scheduleIndex === -1) return;
-      
-      // Update the seats status
-      seats.forEach(seatNumber => {
-        allRoutes[routeIndex].jadwal[scheduleIndex].kursi.forEach(seat => {
-          if (seat.nomor === seatNumber) {
-            seat.status = newStatus;
+    // Fungsi untuk update status kursi di rute dan tanggal tertentu di Firestore
+    async function updateSeatStatus(routeName, date, seats, newStatus) {
+      try {
+        const routesRef = collection(db, "routes"); // Asumsi koleksi rute bernama 'routes'
+        const q = query(routesRef, where("nama", "==", routeName));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          console.warn(`Route '${routeName}' not found in Firestore.`);
+          return;
+        }
+
+        const routeDoc = querySnapshot.docs[0];
+        const routeData = routeDoc.data();
+        const routeId = routeDoc.id;
+
+        let updatedJadwal = routeData.jadwal || [];
+        const scheduleIndex = updatedJadwal.findIndex(s => s.tanggal === date);
+
+        if (scheduleIndex === -1) {
+          console.warn(`Schedule for date '${date}' not found for route '${routeName}'.`);
+          return;
+        }
+
+        // Buat salinan jadwal dan kursi untuk menghindari mutasi langsung
+        let currentSeats = updatedJadwal[scheduleIndex].kursi || [];
+        let newSeats = currentSeats.map(seat => {
+          if (seats.includes(seat.nomor)) {
+            return { ...seat, status: newStatus };
           }
+          return seat;
         });
-      });
-      
-      // Save back to localStorage
-      localStorage.setItem('data_rute', JSON.stringify(allRoutes));
+
+        updatedJadwal[scheduleIndex].kursi = newSeats;
+
+        // Update dokumen rute di Firestore
+        await updateDoc(doc(db, "routes", routeId), {
+          jadwal: updatedJadwal
+        });
+        console.log(`Seat status updated for route ${routeName}, date ${date}.`);
+
+      } catch (e) {
+        console.error("Error updating seat status in Firestore: ", e);
+      }
     }
     
     // Load data saat halaman dimuat
