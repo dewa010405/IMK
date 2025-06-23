@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Riwayat Pemesanan - TimorTravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Material+Symbols+Rounded" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2a5298;
+      --secondary: #0070dd;
+      --danger: #dc3545;
+      --success: #28a745;
+      --gray: #6c757d;
+      --light-gray: #f8f9fa;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f6fbff;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #eef8ff;
+      padding: 16px 24px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .header .logo {
+      display: flex;
+      align-items: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .logo .material-symbols-rounded {
+      font-size: 28px;
+      color: #fbbc05;
+      margin-right: 8px;
+    }
+
+    .main-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .history-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .history-item {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .history-item:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #dee2e6;
+    }
+
+    .history-title {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 18px;
+    }
+
+    .history-date {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .history-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .detail-item {
+      margin-bottom: 5px;
+    }
+
+    .detail-label {
+      font-weight: 500;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .detail-value {
+      font-weight: 500;
+      color: #495057;
+    }
+
+    .no-history {
+      text-align: center;
+      padding: 40px;
+      color: var(--gray);
+    }
+
+    .btn-kembali {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-kembali:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    .user-info {
+      background-color: var(--light-gray);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .history-details {
+        grid-template-columns: 1fr;
+      }
+      
+      .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .history-date {
+        margin-top: 5px;
+      }
+
+      .user-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <span class="material-symbols-rounded">directions_bus</span>
+      TimorTravel.com
+    </div>
+    <div>
+      <a href="beranda.html" class="btn btn-primary">Kembali ke Beranda</a>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <div class="history-container">
+      <h2>Riwayat Pemesanan</h2>
+      
+      <div id="userInfo" class="user-info">
+        <!-- Informasi akun akan diisi oleh JavaScript -->
+      </div>
+      
+      <div id="historyList">
+        <!-- Riwayat akan diisi oleh JavaScript -->
+      </div>
+      
+      <div class="text-center">
+        <a href="beranda.html" class="btn-kembali">
+          <i class="bi bi-arrow-left"></i> Kembali ke Beranda
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fungsi untuk menampilkan informasi akun
+    function displayUserInfo() {
+      const userInfo = document.getElementById('userInfo');
+      const akun = JSON.parse(localStorage.getItem('login_aktif'));
+      
+      if (akun) {
+        userInfo.innerHTML = `
+          <div>
+            <div class="detail-label">Akun Anda</div>
+            <div class="user-name">${akun.nama} (${akun.username})</div>
+          </div>
+          <div>
+            <div class="detail-label">Total Pemesanan</div>
+            <div id="totalBookings">Memuat...</div>
+          </div>
+        `;
+      }
+    }
+
+    // Fungsi untuk menampilkan riwayat pemesanan sesuai akun
+    function displayBookingHistory() {
+      const historyList = document.getElementById('historyList');
+      const akun = JSON.parse(localStorage.getItem('login_aktif'));
+      const allBookings = JSON.parse(localStorage.getItem('booking_history')) || [];
+      
+      // Filter riwayat berdasarkan nama akun yang login
+      const userBookings = allBookings.filter(booking => 
+        booking.nama === akun?.nama
+      );
+      
+      if (userBookings.length === 0) {
+        historyList.innerHTML = `
+          <div class="no-history">
+            <i class="bi bi-calendar-x" style="font-size: 3rem; color: #adb5bd;"></i>
+            <h3 style="margin-top: 15px;">Belum Ada Riwayat Pemesanan</h3>
+            <p>Anda belum melakukan pemesanan tiket bus.</p>
+          </div>
+        `;
+        
+        document.getElementById('totalBookings').textContent = '0 pemesanan';
+        return;
+      }
+      
+      // Update total pemesanan
+      document.getElementById('totalBookings').textContent = `${userBookings.length} pemesanan`;
+      
+      // Urutkan berdasarkan tanggal terbaru
+      userBookings.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+      
+      // Tampilkan setiap riwayat pemesanan
+      userBookings.forEach((booking, index) => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        
+        const formattedDate = new Date(booking.tanggal).toLocaleDateString('id-ID', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        const formattedTime = booking.jam;
+        const formattedPrice = new Intl.NumberFormat('id-ID', { 
+          style: 'currency', 
+          currency: 'IDR',
+          maximumFractionDigits: 0
+        }).format(booking.totalHarga);
+        
+        historyItem.innerHTML = `
+          <div class="history-header">
+            <div class="history-title">Pemesanan #${index + 1}</div>
+            <div class="history-date">${formattedDate}</div>
+          </div>
+          <div class="history-details">
+            <div class="detail-item">
+              <div class="detail-label">Rute Perjalanan</div>
+              <div class="detail-value">${booking.rute}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Jam Keberangkatan</div>
+              <div class="detail-value">${formattedTime}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Jumlah Tiket</div>
+              <div class="detail-value">${booking.jumlahTiket}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Nomor Kursi</div>
+              <div class="detail-value">${booking.kursi.join(', ')}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Total Pembayaran</div>
+              <div class="detail-value">${formattedPrice}</div>
+            </div>
+          </div>
+        `;
+        
+        historyList.appendChild(historyItem);
+      });
+    }
+
+    // Inisialisasi saat halaman dimuat
+    window.onload = function() {
+      // Cek login
+      const akun = JSON.parse(localStorage.getItem('login_aktif'));
+      if (!akun) {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      displayUserInfo();
+      displayBookingHistory();
+      
+      // Tambahkan riwayat pemesanan saat ini jika ada dan sesuai dengan akun
+      const currentBooking = JSON.parse(localStorage.getItem('booking_data'));
+      if (currentBooking && currentBooking.nama === akun.nama) {
+        const bookingHistory = JSON.parse(localStorage.getItem('booking_history')) || [];
+        bookingHistory.push(currentBooking);
+        localStorage.setItem('booking_history', JSON.stringify(bookingHistory));
+        localStorage.removeItem('booking_data');
+        
+        // Refresh tampilan
+        displayBookingHistory();
+      }
+    };
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
